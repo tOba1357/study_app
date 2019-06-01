@@ -5,6 +5,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
   devise :omniauthable, omniauth_providers: %i[google_oauth2]
 
+  has_many :word_cards
+
   class << self
     def from_omniauth(auth)
       user = User.find_by(uid: auth.uid, provider: auth.provider)

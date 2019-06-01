@@ -1,0 +1,28 @@
+<h2>単語一覧</h2>
+<%= link_to '作成', new_word_card_path, class: 'btn btn-primary' %>
+<%= link_to '勉強する', study_word_cards_path, class: 'btn btn-primary' %>
+<table class="table">
+  <thead>
+  <tr>
+    <th>id</th>
+    <td>word</td>
+    <td>description</td>
+    <td></td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @word_cards.each do |word_card| %>
+  <tr>
+    <th><%= word_card.id %></th>
+    <td><%= word_card.word %></td>
+    <td><%= word_card.description %></td>
+    <td>
+      <div class="btn-group">
+        <%= link_to '編集', edit_word_card_path(word_card), class: 'btn btn-sm btn-warning' %>
+      </div>
+    </td>
+  </tr>
+  <% end %>
+  </tbody>
+</table>

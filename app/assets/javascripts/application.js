@@ -14,3 +14,47 @@
 //= require activestorage
 //= require turbolinks
 //= require_tree .
+
+$(document).on('turbolinks:load', function() {
+  if ($('#word_cards-study').length > 0) {
+    var currentIndex = 0;
+    function sortWords() {
+      var words = JSON.parse(JSON.stringify(gon.word_cards));
+      words.forEach(function (word) {
+        word.sortOrder = Math.random();
+      });
+      words.sort(function (w1, w2) {
+        return w1.sortOrder - w2.sortOrder;
+      })
+      return words;
+    }
+
+    var words = sortWords();
+    var $word = $('#word');
+    var $description = $('#description');
+    function onClickButtonAnswer(e) {
+      e.preventDefault();
+      $description.css('display', 'block');
+    }
+
+    function setWord(word) {
+      $description.css('display', 'none');
+      $word.text(word.word);
+      $description.text(word.description);
+    }
+
+    $('#button-answer').on('click', onClickButtonAnswer);
+    $('#button-next').on('click', function (e) {
+      e.preventDefault();
+      currentIndex += 1;
+      if (currentIndex >= words.length) {
+        currentIndex = 0;
+        words = sortWords();
+      }
+      setWord(words[currentIndex])
+    });
+
+
+    setWord(words[currentIndex]);
+  }
+});
