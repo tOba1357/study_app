@@ -41,6 +41,8 @@ $(document).on('turbolinks:load', function() {
       $description.css('display', 'none');
       $word.text(word.word);
       $description.text(word.description);
+      $('#button-forget').prop('disabled', false);
+      $('#button-remember').prop('disabled', false);
     }
 
     $('#button-answer').on('click', onClickButtonAnswer);
@@ -54,6 +56,30 @@ $(document).on('turbolinks:load', function() {
       setWord(words[currentIndex])
     });
 
+
+    $('#button-remember').on('click', function (e) {
+      e.preventDefault();
+      var $this = $(this);
+      $this.prop("disabled", true);
+      $('#button-forget').prop('disabled', true);
+      $.ajax({
+        type: 'POST',
+        url: '/word_cards/' + words[currentIndex].id + '/word_card_results',
+        data: {remember: true}
+      });
+    });
+
+    $('#button-forget').on('click', function (e) {
+      e.preventDefault();
+      var $this = $(this);
+      $this.prop("disabled", true);
+      $('#button-remember').prop('disabled', true);
+      $.ajax({
+        type: 'POST',
+        url: '/word_cards/' + words[currentIndex].id + '/word_card_results',
+        data: {remember: false}
+      })
+    });
 
     setWord(words[currentIndex]);
   }
