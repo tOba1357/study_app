@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     resources :word_cards do
       collection do
         get :study
+        get :study_word
       end
       resources :word_card_results, only: [:create]
     end

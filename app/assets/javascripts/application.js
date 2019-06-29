@@ -17,19 +17,7 @@
 
 $(document).on('turbolinks:load', function() {
   if ($('#word_cards-study').length > 0) {
-    var currentIndex = 0;
-    function sortWords() {
-      var words = JSON.parse(JSON.stringify(gon.word_cards));
-      words.forEach(function (word) {
-        word.sortOrder = Math.random();
-      });
-      words.sort(function (w1, w2) {
-        return w1.sortOrder - w2.sortOrder;
-      })
-      return words;
-    }
-
-    var words = sortWords();
+    var currentWord = null;
     var $word = $('#word');
     var $description = $('#description');
     function onClickButtonAnswer(e) {
@@ -45,15 +33,24 @@ $(document).on('turbolinks:load', function() {
       $('#button-remember').prop('disabled', false);
     }
 
+    function getAndSetNextWord() {
+      $.ajax({
+        type: 'GET',
+        url: '/word_cards/study_word',
+        success: function (data, textStatus, jqXHR) {
+          currentWord = data.word_card;
+          setWord(data.word_card)
+        },
+        error: function () {
+          alert('error')
+        }
+      })
+    }
+
     $('#button-answer').on('click', onClickButtonAnswer);
     $('#button-next').on('click', function (e) {
       e.preventDefault();
-      currentIndex += 1;
-      if (currentIndex >= words.length) {
-        currentIndex = 0;
-        words = sortWords();
-      }
-      setWord(words[currentIndex])
+      getAndSetNextWord();
     });
 
 
@@ -64,7 +61,7 @@ $(document).on('turbolinks:load', function() {
       $('#button-forget').prop('disabled', true);
       $.ajax({
         type: 'POST',
-        url: '/word_cards/' + words[currentIndex].id + '/word_card_results',
+        url: '/word_cards/' + currentWord.id + '/word_card_results',
         data: {remember: true}
       });
     });
@@ -76,11 +73,11 @@ $(document).on('turbolinks:load', function() {
       $('#button-remember').prop('disabled', true);
       $.ajax({
         type: 'POST',
-        url: '/word_cards/' + words[currentIndex].id + '/word_card_results',
+        url: '/word_cards/' + currentWord.id + '/word_card_results',
         data: {remember: false}
       })
     });
 
-    setWord(words[currentIndex]);
+    getAndSetNextWord();
   }
 });

@@ -4,7 +4,6 @@
 <table class="table">
   <thead>
   <tr>
-    <th>id</th>
     <td>word</td>
     <td>description</td>
     <td></td>
@@ -14,12 +13,12 @@
   <tbody>
   <% @word_cards.each do |word_card| %>
   <tr>
-    <th><%= word_card.id %></th>
     <td><%= word_card.word %></td>
     <td style="white-space: pre-wrap;"><%= word_card.description %></td>
     <td>
       <div class="btn-group">
         <%= link_to '編集', edit_word_card_path(word_card), class: 'btn btn-sm btn-warning' %>
+        <%= link_to '削除', word_card_path(word_card), class: 'btn btn-sm btn-danger', method: :delete, data: { confirm: '削除しますか？' } %>
       </div>
     </td>
   </tr>

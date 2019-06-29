@@ -35,7 +35,7 @@ class WordCardsController < ApplicationController
 
   def destroy
     @word_card = current_user.word_cards.find_by(id: params[:id])
-    @word_card.delete
+    @word_card.update!(deleted_at: Time.zone.now)
     redirect_to word_cards_path
   end
 
@@ -43,8 +43,27 @@ class WordCardsController < ApplicationController
     gon.word_cards = current_user.word_cards
   end
 
-  private
-    def word_card_params
-      params.require(:word_card).permit(:word, :description)
+  def study_word
+    r = SimpleRandom.new
+    r.set_seed
+    @word_card = current_user.word_cards
+                     .includes(:word_card_result_summary)
+                     .max_by do |word_card|
+      summary = word_card.word_card_result_summary
+      summary ||= word_card.build_word_card_result_summary(
+          {
+              remember_count: 0,
+              result_count: 0,
+          }
+      )
+      r.beta(summary.result_count - summary.remember_count + 1, summary.remember_count + 1)
     end
+    render json: {word_card: @word_card}
+  end
+
+  private
+
+  def word_card_params
+    params.require(:word_card).permit(:word, :description)
+  end
 end
