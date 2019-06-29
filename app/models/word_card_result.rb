@@ -34,8 +34,8 @@ class WordCardResult < ApplicationRecord
 insert into word_card_result_summaries (word_card_id, result_count, remember_count, created_at, updated_at)
 select 
   word_card_id,
-  sum(case when remember then 1 else 0 end) remember_count,
   count(*) result_count,
+  sum(case when remember then 1 else 0 end) remember_count,
   current_timestamp,
   current_timestamp
 from (
